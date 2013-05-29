@@ -24,19 +24,12 @@ module Compositor
       false
     end
 
-    def self.inherited(subclass)
-      method_name = root_class_name(subclass)
-      unless method_name.eql?("base")
-        Compositor::DSL.send(:define_method, method_name) do |*args|
-          leaf = subclass.new(@view_context, *args)
-          if self.generator
-            raise "Leaves should be called within composite" unless self.generator.composite?
-            self.generator.collection << leaf
-          else
-            self.generator = leaf
-          end
-          leaf
-        end
+    def define_with_dsl!(dsl)
+      if dsl.generator
+        raise "Leaves should be called within composite" unless dsl.generator.composite?
+        dsl.generator.collection << self
+      else
+        dsl.generator = self
       end
     end
   end

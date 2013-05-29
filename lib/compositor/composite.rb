@@ -2,9 +2,20 @@ module Compositor
   class Composite < Compositor::Base
     attr_accessor :collection, :renderer
 
-    def initialize(view_context, *args)
+    def initialize(view_context, args = {})
       super
-      self.collection ||= []
+
+      @collection_set = true if args[:collection]
+      self.collection ||= default
+    end
+
+    def default=(value)
+      @default_set = true
+      @default = value
+    end
+
+    def default
+      @default_set ? @default : []
     end
 
     def to_hash
@@ -23,31 +34,29 @@ module Compositor
       true
     end
 
-    def self.inherited(subclass)
-      method_name = subclass.name.gsub(/.*::/, '').underscore
-      unless method_name.eql?("base")
-        Compositor::DSL.send(:define_method, method_name) do |args = {}, &block|
-          original_generator = self.generator
-          composite = subclass.new(self.view_context, args)
+    def map_to_dsl!(dsl, &block)
+      original_generator = dsl.generator
 
-          self.generator = composite
+      dsl.generator = self
 
-          if args[:collection] && block
-            # reset collection, we'll be mapping it via a block
-            composite.collection = []
-            args[:collection].each do |object|
-              self.instance_exec(object, &block)
-            end
-          elsif block
-            self.instance_eval &block
-          end
-
-          if original_generator
-            self.generator = original_generator
-            self.generator.collection << composite
-          end
+      if @collection_set && block
+        # reset collection, we'll be mapping it via a block
+        unmapped_collection = collection
+        self.collection = []
+        unmapped_collection.each do |object|
+          dsl.instance_exec(object, &block)
         end
+      elsif block
+        dsl.instance_eval &block
       end
+
+      dsl.generator = original_generator if original_generator
+    end
+
+    def define_with_dsl!(dsl, &block)
+      map_to_dsl!(dsl, &block)
+
+      dsl.generator.collection << self if dsl.generator != self
     end
   end
 end

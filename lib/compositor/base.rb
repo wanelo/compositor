@@ -42,11 +42,24 @@ module Compositor
     def self.root_class_name(klazz)
       klazz.name.gsub(/.*::/, '').underscore
     end
+
+    def self.inherited(subclass)
+      method_name = root_class_name(subclass)
+      unless method_name.eql?("base")
+        Compositor::DSL.send(:define_method, method_name) do |*args, &block|
+          subclass.new(@view_context, *args).define_with_dsl!(self, &block)
+        end
+      end
+    end
+
+    def self.define_with_dsl!
+      raise "Implement in subclasses"
+    end
   end
 end
 
-require_relative 'leaf'
-require_relative 'composite'
 require_relative 'dsl'
+require_relative 'composite'
+require_relative 'leaf'
 require_relative 'list'
 require_relative 'hash'
