@@ -52,7 +52,7 @@ module Compositor
 end
 ```
 
-Now this class automatically registers "user" DSL method, which receives a user object and any other
+This small class automatically registers "user" DSL method, which receives a user object and any other
 important attributes.
 
 Then this class can be merged with other similar "leaf" classes, or another "composite" class, such as
@@ -95,7 +95,6 @@ generates hash by walking the tree and merging everything together.
       }
    }
 ```
-
 
 ## Contributing
 
