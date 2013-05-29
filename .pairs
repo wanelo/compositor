@@ -1,0 +1,12 @@
+pairs:
+  ag: Atasay Gokkaya; atasay
+  km: Kaan Meralan; kaan
+  kg: Konstantin Gredeskoul; kig
+  ph: Paul Henry; paul
+  sf: Sean Flannagan; sean
+  es: Eric Saxby; sax
+  cc: Cihan Cimen; cihan
+  sc: Server Cimen; server
+email:
+  prefix: pair
+  domain: wanelo.com
