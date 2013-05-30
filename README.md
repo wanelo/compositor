@@ -64,7 +64,7 @@ generates hash by walking the tree and merging everything together.
 ```ruby
 
    composite = Composite.create(view_context) do
-     hash do
+     map do
        store store, root: :store
        user current_user, root: :user
        list collection: products, root: :products do |p|

@@ -23,10 +23,6 @@ module Compositor
       to_hash
     end
 
-    def collection_to_generator(klazz, collection)
-      collection.map { |o| klazz.new(view_context) }
-    end
-
     def to_json(options = {})
       Oj.dump(to_hash)
     end
@@ -45,14 +41,16 @@ module Compositor
 
     def self.inherited(subclass)
       method_name = root_class_name(subclass)
-      unless method_name.eql?("base")
+      unless method_name.eql?("base") # check if it's already defined
         Compositor::DSL.send(:define_method, method_name) do |*args, &block|
-          subclass.new(@view_context, *args).define_with_dsl!(self, &block)
+          subclass.
+            new(@view_context, *args).
+            dsl(self, &block)
         end
       end
     end
 
-    def self.define_with_dsl!
+    def dsl
       raise "Implement in subclasses"
     end
   end
@@ -62,5 +60,4 @@ require_relative 'dsl'
 require_relative 'composite'
 require_relative 'leaf'
 require_relative 'list'
-require_relative 'hash'
-require_relative 'cache'
+require_relative 'map'

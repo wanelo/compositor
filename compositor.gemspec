@@ -15,6 +15,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = %w(lib)
   gem.version       = Compositor::VERSION
 
+  gem.add_dependency 'oj'
+
   gem.add_development_dependency 'rspec'
 
   gem.add_development_dependency 'guard-rspec'

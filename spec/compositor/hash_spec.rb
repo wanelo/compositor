@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Compositor::Hash do
+describe Compositor::Map do
   let(:view_context) { Object.new }
 
-  it 'returns the generated hash' do
+  it 'returns the generated map' do
     expected = {
       tests: {
         num1: {number: 1},
@@ -13,7 +13,7 @@ describe Compositor::Hash do
     }
 
     dsl = Compositor::DSL.create(view_context)
-    dsl.hash root: :tests do
+    dsl.map root: :tests do
       dsl.dsl_int 1, root: :num1
       dsl.dsl_int 2, root: :num2
       dsl.dsl_int 3, root: :num3
@@ -22,7 +22,7 @@ describe Compositor::Hash do
     expected.should == dsl.to_hash
   end
 
-  it 'returns the generated deeply nested hash without explicit receiver' do
+  it 'returns the generated deeply nested map without explicit receiver' do
     expected = {
       tests: {
         num1: {number: 1},
@@ -36,7 +36,7 @@ describe Compositor::Hash do
     }
 
     dsl = Compositor::DSL.create(view_context)
-    dsl.hash root: :tests do
+    dsl.map root: :tests do
       dsl_int 1, root: :num1
       dsl_int 2, root: :num2
       dsl_int 3, root: :num3
@@ -52,7 +52,7 @@ describe Compositor::Hash do
   describe '#empty' do
     it 'returns the default type' do
       dsl = Compositor::DSL.create(view_context) do
-        hash collection: [], root: false
+        map collection: [], root: false
       end
 
       {}.should == dsl.to_hash

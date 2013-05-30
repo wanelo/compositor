@@ -24,7 +24,7 @@ module Compositor
       false
     end
 
-    def define_with_dsl!(dsl)
+    def dsl(dsl)
       if dsl.generator
         raise "Leaves should be called within composite" unless dsl.generator.composite?
         dsl.generator.collection << self

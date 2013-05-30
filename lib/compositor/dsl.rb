@@ -1,7 +1,7 @@
 module Compositor
   class DSL
     attr_reader :view_context
-    attr_accessor :result, :generator
+    attr_accessor :generator
 
     def initialize(view_context)
       @view_context = view_context
@@ -11,12 +11,6 @@ module Compositor
       dsl = new(view_context)
       dsl.instance_eval &block if block
       dsl
-    end
-
-    def paginate collection, params
-      paginator collection: collection,
-                pagination_url: params[:pagination_url],
-                params: params[:api_params]
     end
 
     def to_json
