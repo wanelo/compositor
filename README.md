@@ -25,29 +25,31 @@ Or install it yourself as:
 ## Usage
 
 For each model that needs a hash/json representation you need to create a ruby class that subclasses Composite::Leaf,
-adds some custom state that's important for rendering that object, and implements #to_hash method:
+adds some custom state that's important for rendering that object in addition to view_context, and implements one of the
+two methods:
+
+#to_hash method
 
 ```ruby
-module Compositor
-  class Leaf::User < ::Compositor::Leaf
-    attr_accessor :user
+# The actual class name "User" is convered into
+# a DSL method named "user", shown later.
 
-    def initialize(view_context, user, attrs = {})
-      super(view_context, {user: user}.merge!(attrs))
-    end
+class Compositor::User < Compositor::Leaf
+  attr_accessor :user
 
-    def to_hash
-       with_root_element do
-          {
-              id: user.id,
-              username: user.username,
-              location: user.location,
-              bio: user.bio,
-              url: user.url
-          }
-        end
-      end
-    end
+  def initialize(view_context, user, attrs = {})
+    super(view_context, attrs)
+    self.user = user
+  end
+
+  def to_hash
+    {
+        id: user.id,
+        username: user.username,
+        location: user.location,
+        bio: user.bio,
+        url: user.url
+    }
   end
 end
 ```
@@ -56,10 +58,12 @@ This small class automatically registers "user" DSL method, which receives a use
 important attributes.
 
 Then this class can be merged with other similar "leaf" classes, or another "composite" class, such as
-Composite::Hash or Composite::List to create a complex nested Hash or JSON data structure.
+Composite::Map or Composite::List to create a Hash or an Array as the top-level JSON data structure.
 
 Once the tree of composite objects has been setup, calling #to_hash on the top level object quickly
 generates hash by walking the tree and merging everything together.
+
+
 
 ```ruby
 
