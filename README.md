@@ -40,7 +40,7 @@ wrapping ```User``` model.
 ```ruby
 # The actual class name "User" is convered into a DSL method named "user", shown later.
 
-class Compositor::User < Compositor::Leaf
+class UserCompositor < Compositor::Leaf
   attr_accessor :user
 
   def initialize(view_context, user, attrs = {})

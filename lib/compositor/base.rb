@@ -36,7 +36,7 @@ module Compositor
     end
 
     def self.root_class_name(klazz)
-      klazz.name.gsub(/.*::/, '').underscore
+      klazz.name.gsub(/(.*::)|(Compositor$)/, '').underscore
     end
 
     def self.inherited(subclass)

@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 
 describe 'Performance' do
 
@@ -30,14 +30,13 @@ describe 'Performance' do
 
       @timing[:dsl] = output.to_s.to_f
 
-      cmp = nil
       output = Benchmark.measure do
         10000.times do
-          string = Compositor::Leaf::DslString.new(view_context)
-          int = Compositor::Leaf::DslInt.new(view_context, 3)
+          string = DslStringCompositor.new(view_context)
+          int = DslIntCompositor.new(view_context, 3)
           list = Compositor::List.new(view_context,
                                       root: :numbers,
-                                      collection: [1, 2, 3].map! { |n| Compositor::Leaf::DslInt.new(view_context, n) })
+                                      collection: [1, 2, 3].map! { |n| DslIntCompositor.new(view_context, n) })
           cmp = Compositor::Map.new(view_context, collection: [string, int, list])
           cmp.to_hash.should == {:a => "b", :number => 3, :numbers => [{:number => 1}, {:number => 2}, {:number => 3}]}
         end

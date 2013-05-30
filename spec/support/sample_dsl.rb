@@ -1,33 +1,35 @@
-module Compositor
-  class Leaf::DslString < Compositor::Leaf
-    def to_hash
+class DslStringCompositor < Compositor::Leaf
+  attr_accessor :string
+
+  def to_hash
+    {
+        a: "b"
+    }
+  end
+end
+
+class DslIntCompositor < Compositor::Leaf
+  attr_accessor :number
+
+  def initialize(view_context, number, attrs = {})
+    super(view_context, {number: number}.merge!(attrs))
+  end
+
+  def to_hash
+    with_root_element do
       {
-          a: "b"
+          number: @number
       }
     end
   end
+end
 
-  class Leaf::DslInt < Compositor::Leaf
-    attr_accessor :number
+class DslObjectCompositor < Compositor::Leaf
+  attr_accessor :object
 
-    def initialize(view_context, number, attrs = {})
-      super(view_context, {number: number}.merge!(attrs))
-    end
-
-    def to_hash
-      with_root_element do
-        {
-            number: @number
-        }
-      end
-    end
-  end
-
-  class Leaf::DslObject < Compositor::Leaf
-    def to_hash
-      {
-          a: object
-      }
-    end
+  def to_hash
+    {
+        a: object
+    }
   end
 end

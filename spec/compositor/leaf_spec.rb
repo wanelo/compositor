@@ -28,7 +28,7 @@ describe Compositor::Leaf do
 
     it "returns an instance of subclass" do
       dsl = Compositor::DSL.create(view_context).dsl_string
-      dsl.should be_kind_of(Compositor::Leaf::DslString)
+      dsl.should be_kind_of(DslStringCompositor)
     end
   end
 end
