@@ -59,5 +59,6 @@ end
 require_relative 'dsl'
 require_relative 'composite'
 require_relative 'leaf'
+require_relative 'literal'
 require_relative 'list'
 require_relative 'map'
