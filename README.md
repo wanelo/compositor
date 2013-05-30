@@ -25,14 +25,15 @@ Or install it yourself as:
 ## Usage
 
 For each model that needs a hash/json representation you need to create a ruby class that subclasses Composite::Leaf,
-adds some custom state that's important for rendering that object in addition to view_context, and implements one of the
-two methods:
+adds some custom state that's important for rendering that object in addition to view_context, and implements #to_hash
+method.
 
-#to_hash method
+We recommend you place your Compositor classes in eg ```app/compositors/*``` directory, that has one compositor
+class per model class you will be rendering. Example below would be ```app/compositors/user.rb```, a compositor class
+wrapping ```User``` model.
 
 ```ruby
-# The actual class name "User" is convered into
-# a DSL method named "user", shown later.
+# The actual class name "User" is convered into a DSL method named "user", shown later.
 
 class Compositor::User < Compositor::Leaf
   attr_accessor :user
