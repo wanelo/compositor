@@ -1,13 +1,6 @@
 require 'compositor/version'
 
 module Compositor
-  def self.cache=(cache)
-    @cache = cache
-  end
-
-  def self.cache
-    @cache
-  end
 end
 
 unless "".respond_to?(:constantize)

@@ -24,9 +24,14 @@ Or install it yourself as:
 
 ## Usage
 
-For each model that needs a hash/json representation you need to create a ruby class that subclasses Composite::Leaf,
-adds some custom state that's important for rendering that object in addition to view_context, and implements #to_hash
+For each model that needs a hash/json representation you need to create a ruby class that subclasses ```Composite::Leaf```,
+adds some custom state that's important for rendering that object in addition to ```view_context```, and implement the ```#to_hash```
 method.
+
+The ```view_context``` variable is a reference to an object holding necessary helpers for generating JSON, for example
+view_context is automatically available inside Rails controllers, and contains helper methods necessary to generate application URLs.
+Outside of Rails application, ```view_context``` can be any other object holding application helpers or state.  All
+subclasses of ```Compositor::Leaf``` inherit view_context reference, and can use it to construct Hash representations.
 
 We recommend you place your Compositor classes in eg ```app/compositors/*``` directory, that has one compositor
 class per model class you will be rendering. Example below would be ```app/compositors/user.rb```, a compositor class
@@ -49,7 +54,9 @@ class Compositor::User < Compositor::Leaf
         username: user.username,
         location: user.location,
         bio: user.bio,
-        url: user.url
+        url: user.url,
+        image_url: view_context.image_path(user.avatar),
+        ...
     }
   end
 end
@@ -64,11 +71,12 @@ Composite::Map or Composite::List to create a Hash or an Array as the top-level 
 Once the tree of composite objects has been setup, calling #to_hash on the top level object quickly
 generates hash by walking the tree and merging everything together.
 
-
+In the example below, application defines also ```Compositor::Store```, ```Compositor::Prouduct``` classes
+that similar to ```Compositor::User``` return hash representations of each model object.
 
 ```ruby
 
-   composite = Composite.create(view_context) do
+   compositor = Compositor::DSL.create(view_context) do
      map do
        store store, root: :store
        user current_user, root: :user
@@ -78,13 +86,14 @@ generates hash by walking the tree and merging everything together.
      end
    end
 
-   puts composite.to_hash # =>
+   puts compositor.to_hash # =>
 
    {
       :store => {
          id: 12354,
          name: "amazon.com",
          url: "http://www.amazon.com",
+
          ..
       },
       :user => {
@@ -92,7 +101,8 @@ generates hash by walking the tree and merging everything together.
          username: "kigster",
          location: "San Francisco",
          bio: "",
-         url: ""
+         url: "",
+         image_url: "http://cdn-app.domain.com/kigster/avatar/200.jpg"
       },
       :products => {
            [ id: 1234, :name => "Awesome Product", ... ],
