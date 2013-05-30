@@ -1,11 +1,11 @@
 module Compositor
   class Base
     attr_reader :attrs
-    attr_accessor :root, :view_context
+    attr_accessor :root, :context
 
     def initialize(view_context, attrs = {})
       @attrs = attrs
-      self.view_context = view_context
+      self.context = view_context
       attrs.each_pair do |key, value|
         self.send("#{key}=", value)
       end
@@ -44,7 +44,7 @@ module Compositor
       unless method_name.eql?("base") # check if it's already defined
         Compositor::DSL.send(:define_method, method_name) do |*args, &block|
           subclass.
-            new(@view_context, *args).
+            new(@context, *args).
             dsl(self, &block)
         end
       end

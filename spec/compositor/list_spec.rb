@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Compositor::List do
-  let(:view_context) { Object.new }
+  let(:context) { Object.new }
 
   it 'returns the generated array with the explicit receiver' do
     integers = [1, 2, 3]
@@ -13,7 +13,7 @@ describe Compositor::List do
       ]
     }
 
-    dsl = Compositor::DSL.create(view_context)
+    dsl = Compositor::DSL.create(context)
     dsl.list root: :tests, collection: integers do |item|
       dsl.dsl_int item
     end
@@ -31,7 +31,7 @@ describe Compositor::List do
       ]
     }
 
-    dsl = Compositor::DSL.create(view_context)
+    dsl = Compositor::DSL.create(context)
     dsl.list root: :tests, collection: integers do |item|
       dsl_int item
     end
@@ -41,7 +41,7 @@ describe Compositor::List do
 
   describe '#empty' do
     it 'returns the default type' do
-      dsl = Compositor::DSL.create(view_context) do
+      dsl = Compositor::DSL.create(context) do
         list collection: [], root: false
       end
 

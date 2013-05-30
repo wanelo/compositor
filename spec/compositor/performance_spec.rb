@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'Performance' do
 
-  let(:view_context) { Object.new }
+  let(:context) { Object.new }
   let(:permitted_dsl_performance_penalty) { 60 } # 60% slower is allowed, any slower is not.)
 
   describe 'generating DSL' do
@@ -15,7 +15,7 @@ describe 'Performance' do
       dsl = nil
       output = Benchmark.measure do
         10000.times do
-          dsl = Compositor::DSL.create(view_context) do |dsl|
+          dsl = Compositor::DSL.create(context) do |dsl|
             map do
               dsl_string string: "hello"
               dsl_int 3
@@ -32,12 +32,12 @@ describe 'Performance' do
 
       output = Benchmark.measure do
         10000.times do
-          string = DslStringCompositor.new(view_context)
-          int = DslIntCompositor.new(view_context, 3)
-          list = Compositor::List.new(view_context,
+          string = DslStringCompositor.new(context)
+          int = DslIntCompositor.new(context, 3)
+          list = Compositor::List.new(context,
                                       root: :numbers,
-                                      collection: [1, 2, 3].map! { |n| DslIntCompositor.new(view_context, n) })
-          cmp = Compositor::Map.new(view_context, collection: [string, int, list])
+                                      collection: [1, 2, 3].map! { |n| DslIntCompositor.new(context, n) })
+          cmp = Compositor::Map.new(context, collection: [string, int, list])
           cmp.to_hash.should == {:a => "b", :number => 3, :numbers => [{:number => 1}, {:number => 2}, {:number => 3}]}
         end
       end

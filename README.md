@@ -38,13 +38,13 @@ class per model class you will be rendering. Example below would be ```app/compo
 wrapping ```User``` model.
 
 ```ruby
-# The actual class name "User" is convered into a DSL method named "user", shown later.
+# The actual class name "User" is converted into a DSL method named "user", shown later.
 
 class UserCompositor < Compositor::Leaf
   attr_accessor :user
 
-  def initialize(view_context, user, attrs = {})
-    super(view_context, attrs)
+  def initialize(context, user, attrs = {})
+    super(context, attrs)
     self.user = user
   end
 
@@ -55,7 +55,7 @@ class UserCompositor < Compositor::Leaf
         location: user.location,
         bio: user.bio,
         url: user.url,
-        image_url: view_context.image_path(user.avatar),
+        image_url: context.image_path(user.avatar),
         ...
     }
   end
@@ -71,16 +71,16 @@ Composite::Map or Composite::List to create a Hash or an Array as the top-level 
 Once the tree of composite objects has been setup, calling #to_hash on the top level object quickly
 generates hash by walking the tree and merging everything together.
 
-In the example below, application defines also ```Compositor::Store```, ```Compositor::Prouduct``` classes
-that similar to ```Compositor::User``` return hash representations of each model object.
+In the example below, application defines also ```StoreCompositor```, ```ProductCompositor``` classes
+that similar to ```UserCompositor``` return hash representations of each model object.
 
 ```ruby
 
-   compositor = Compositor::DSL.create(view_context) do
+   compositor = Compositor::DSL.create(context) do
      map do
-       store store, root: :store
-       user current_user, root: :user
-       list collection: products, root: :products do |p|
+       store @store, root: :store
+       user @user, root: :user
+       list collection: @products, root: :products do |p|
          product p
        end
      end
@@ -110,6 +110,10 @@ that similar to ```Compositor::User``` return hash representations of each model
       }
    }
 ```
+
+The context is an object that can contain helpers, instance variables, or anything that can be used
+within leaves. For example, you can pass in the view_context from the controller to get access to any
+Rails routes or helpers.
 
 ## Contributing
 

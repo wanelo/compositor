@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Compositor::Map do
-  let(:view_context) { Object.new }
+  let(:context) { Object.new }
 
   it 'returns the generated map' do
     expected = {
@@ -12,7 +12,7 @@ describe Compositor::Map do
       }
     }
 
-    dsl = Compositor::DSL.create(view_context)
+    dsl = Compositor::DSL.create(context)
     dsl.map root: :tests do
       dsl.dsl_int 1, root: :num1
       dsl.dsl_int 2, root: :num2
@@ -35,7 +35,7 @@ describe Compositor::Map do
       }
     }
 
-    dsl = Compositor::DSL.create(view_context)
+    dsl = Compositor::DSL.create(context)
     dsl.map root: :tests do
       dsl_int 1, root: :num1
       dsl_int 2, root: :num2
@@ -51,7 +51,7 @@ describe Compositor::Map do
 
   describe '#empty' do
     it 'returns the default type' do
-      dsl = Compositor::DSL.create(view_context) do
+      dsl = Compositor::DSL.create(context) do
         map collection: [], root: false
       end
 

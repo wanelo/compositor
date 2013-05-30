@@ -4,11 +4,14 @@ module Compositor
     attr_accessor :generator
 
     def initialize(view_context)
-      @view_context = view_context
+      @context = view_context
     end
 
     def self.create(view_context, &block)
       dsl = new(view_context)
+      view_context.instance_variables.each do |variable|
+        dsl.instance_variable_set(variable, view_context.instance_variable_get(variable))
+      end
       dsl.instance_eval &block if block
       dsl
     end
