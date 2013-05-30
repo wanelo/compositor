@@ -16,8 +16,8 @@ module Compositor
       dsl
     end
 
-    def to_json
-      generator.to_json
+    def to_json(options = {})
+      generator.to_json(options)
     end
 
     def to_hash
