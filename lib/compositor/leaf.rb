@@ -1,14 +1,5 @@
 module Compositor
   class Leaf < Compositor::Base
-    attr_accessor :object
-
-    def initialize(view_context, object = {}, args = {})
-      if object.is_a?(::Hash)
-        super(view_context, object)
-      else
-        super(view_context, {object: object}.merge!(args))
-      end
-    end
 
     def root
       if @root.is_a?(Symbol)

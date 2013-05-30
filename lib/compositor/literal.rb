@@ -1,7 +1,10 @@
 module Compositor
   class Literal < Compositor::Leaf
+    attr_accessor :object
+
     def initialize(view_context, object = {}, args = {})
-      super(view_context, {object: object}.merge!(args))
+      super(view_context, args)
+      self.object = object
     end
 
     def to_hash

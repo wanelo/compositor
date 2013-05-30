@@ -17,7 +17,7 @@ describe 'Performance' do
         10000.times do
           dsl = Compositor::DSL.create(view_context) do |dsl|
             map do
-              dsl_string "hello"
+              dsl_string string: "hello"
               dsl_int 3
               list collection: [1, 2, 3], root: :numbers do |number|
                 dsl_int number
