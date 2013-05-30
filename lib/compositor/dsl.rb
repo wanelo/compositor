@@ -1,16 +1,16 @@
 module Compositor
   class DSL
-    attr_reader :view_context
+    attr_reader :context
     attr_accessor :generator
 
-    def initialize(view_context)
-      @context = view_context
+    def initialize(context)
+      @context = context
     end
 
-    def self.create(view_context, &block)
-      dsl = new(view_context)
-      view_context.instance_variables.each do |variable|
-        dsl.instance_variable_set(variable, view_context.instance_variable_get(variable))
+    def self.create(context, &block)
+      dsl = new(context)
+      context.instance_variables.each do |variable|
+        dsl.instance_variable_set(variable, context.instance_variable_get(variable))
       end
       dsl.instance_eval &block if block
       dsl
