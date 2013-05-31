@@ -4,6 +4,7 @@ module Compositor
 
     def initialize(view_context, args = {})
       super
+      @collection_set = true if args.has_key?(:collection)
       self.collection ||= []
     end
 
@@ -22,7 +23,7 @@ module Compositor
 
       dsl.generator = self
 
-      if self.collection && !self.collection.empty? && block
+      if self.collection && @collection_set && block
         # reset collection, we'll be mapping it via a block
         unmapped_collection = collection
         self.collection = []

@@ -47,5 +47,15 @@ describe Compositor::List do
 
       [].should == dsl.to_hash
     end
+
+    it 'doesnt execute the block if an empty collection is passed' do
+      dsl = Compositor::DSL.create(context) do
+        list collection: [], root: false do |p|
+          raise "Shouldnt be a DSL" if p.instance_of?(Compositor::DSL)
+        end
+      end
+
+      [].should == dsl.to_hash
+    end
   end
 end
