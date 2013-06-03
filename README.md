@@ -102,12 +102,12 @@ When calling ```to_hash``` on the top level compositor, we get:
       image_url: "http://cdn-app.domain.com/kigster/avatar/200.jpg"
   },
   :user => {
-      id: 1234,
-      username: "kigster",
-      location: "San Francisco",
+      id: 1235,
+      username: "johnny",
+      location: "Sunnyvale",
       bio: "",
       url: "",
-      image_url: "http://cdn-app.domain.com/kigster/avatar/200.jpg"
+      image_url: "http://cdn-app.domain.com/johnny/avatar/200.jpg"
   }
 }
 ```
@@ -157,9 +157,9 @@ similar to ```UserCompositor```, which also have the ```#to_hash``` method defin
          url: "",
          image_url: "http://cdn-app.domain.com/kigster/avatar/200.jpg"
       },
-      :products => {
-           [ id: 1234, :name => "Awesome Product", ... ],
-           [ id: 4325, :name => "Another Awesome Product", ... ]
+      :products => [
+           { id: 1234, :name => "Awesome Product", ... },
+           { id: 4325, :name => "Another Awesome Product", ... }
       }
    }
 ```
