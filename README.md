@@ -3,10 +3,12 @@ Compositor
 
 [![Build status](https://secure.travis-ci.org/wanelo/compositor.png)](http://travis-ci.org/wanelo/compositor)
 
-Composite pattern with a neat DSL for constructing trees of objects in order to render them as a Hash, and subsequently
-JSON.  Used by Wanelo to generate all JSON API responses by compositing multiple objects together, converting to
-a hash and then JSON.
+A Composite Design Pattern with a neat DSL for constructing trees of objects in order to render them as a Hash, and subsequently
+JSON.  Used by Wanelo to generate all JSON API responses by compositing multiple objects together in API responses, converting to
+a plain ruby Hash (or an Array) and then using OJ gem to convert Hash to JSON.
 
+The performance of this approach is significantly faster than RABL, something we started with and abandoned due
+to it's poor performance.
 
 ## Installation
 
@@ -25,21 +27,25 @@ Or install it yourself as:
 ## Usage
 
 For each model that needs a hash/json representation you need to create a ruby class that subclasses ```Composite::Leaf```,
-adds some custom state that's important for rendering that object in addition to ```view_context```, and implement the ```#to_hash```
-method.
+adds some custom state that's important for rendering that object in addition to ```context```, implements a proper constructor
+(see example), and finally implement the main rendering ```#to_hash``` method (used as the "operation" in the Composite pattern
+terminology).
 
-The ```view_context``` variable is a reference to an object holding necessary helpers for generating JSON, for example
-view_context is automatically available inside Rails controllers, and contains helper methods necessary to generate application URLs.
-Outside of Rails application, ```view_context``` can be any other object holding application helpers or state.  All
-subclasses of ```Compositor::Leaf``` inherit view_context reference, and can use it to construct Hash representations.
+The ```context``` variable is a reference to an object holding necessary helpers for generating JSON, for example
+Rails Controllers expose a ```view_context``` instance, and contains helper methods necessary to generate application URLs.
+
+Outside of Rails application, ```context``` can be any other object holding application helpers or state.  All
+subclasses of ```Compositor::Leaf``` inherit ```context``` reference, and can use it to construct Hash representations.
 
 We recommend you place your Compositor classes in eg ```app/compositors/*``` directory, that has one compositor
 class per model class you will be rendering. Example below would be ```app/compositors/user.rb```, a compositor class
 wrapping ```User``` model.
 
 ```ruby
-# The actual class name "User" is converted into a DSL method named "user", shown later.
-
+#
+# Note: the actual class name "UserCompositor" is converted into a DSL method named "user", shown later.
+# File: app/compositors/user_compositor.rb
+#
 class UserCompositor < Compositor::Leaf
   attr_accessor :user
 
@@ -55,27 +61,47 @@ class UserCompositor < Compositor::Leaf
         location: user.location,
         bio: user.bio,
         url: user.url,
-        image_url: context.image_path(user.avatar),
+        image_url: context.image_path(user.avatar),  # using context to generate URL path from routes
         ...
     }
   end
 end
 ```
 
-This small class automatically registers "user" DSL method, which receives a user object and any other
-important attributes.
-
-Then this class can be merged with other similar "leaf" classes, or another "composite" class, such as
-Composite::Map or Composite::List to create a Hash or an Array as the top-level JSON data structure.
-
-Once the tree of composite objects has been setup, calling #to_hash on the top level object quickly
-generates hash by walking the tree and merging everything together.
-
-In the example below, application defines also ```StoreCompositor```, ```ProductCompositor``` classes
-that similar to ```UserCompositor``` return hash representations of each model object.
+You could create this class directly, as in
 
 ```ruby
 
+   uc = UserCompositor.new(view_context, user, {})
+   uc.to_hash # => returns a Hash representation
+   uc.to_json # => calls to_hash, and then renders JSON
+```
+
+But constructing trees of objects that represent a complex API responses requires a lot more than that, such as
+constructing lists (arrays) or maps (hashes) of objects, and deciding which order they appear, and whether each
+inner Hash comes with a "root" element, such as ```:product => { :id => 1, ... }``` where ```:product``` is the root
+element.
+
+So the real power of this gem is in the additional DSL class, that dramatically simplifies definition
+of complex responses, as described below.
+
+Note of caution: despite the fact that typical DSL generation can take mere 50-100 microseconds, defining complex responses
+with DSL does carry a performance penantly of about 50% (we measured it!). Which generally means that generating
+multiple Hashes in a loop using DSL is probably not recommended, but doing it once per web/API request is completely
+reasonable.
+
+## Using the DSL
+
+```UserCompositor``` class, when defined, automatically adds a ```user``` method to the DSL class, which effictively
+instantiates the new UserCompositor instance, passing the context into it automatically.
+
+Using provided ```Compositor::Map``` and ```Compositor::List``` we can construct multiple objects into a larger
+hierarchy.
+
+In the example below, an application also defines ```StoreCompositor```and ```ProductCompositor``` classes
+similar to ```UserCompositor```, which also have the ```#to_hash``` method defined.
+
+```ruby
    compositor = Compositor::DSL.create(context) do
      map do
        store @store, root: :store
@@ -86,8 +112,8 @@ that similar to ```UserCompositor``` return hash representations of each model o
      end
    end
 
+   # now we can call to_hash or to_json on the compositor:
    puts compositor.to_hash # =>
-
    {
       :store => {
          id: 12354,
@@ -111,9 +137,8 @@ that similar to ```UserCompositor``` return hash representations of each model o
    }
 ```
 
-The context is an object that can contain helpers, instance variables, or anything that can be used
-within leaves. For example, you can pass in the view_context from the controller to get access to any
-Rails routes or helpers.
+Inside the list definition above, @products is a collection of Products, ActiveRecord objects,
+and the block maps each to a Compositor using product() method, registered by ProductCompositor.
 
 ## Contributing
 
