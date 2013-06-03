@@ -32,20 +32,19 @@ adds some custom state that's important for rendering that object in addition to
 terminology).
 
 The ```context``` variable is a reference to an object holding necessary helpers for generating JSON, for example
-Rails Controllers expose a ```view_context``` instance, and contains helper methods necessary to generate application URLs.
+Rails Controllers expose a ```view_context``` instance, which contains helper methods necessary to generate application URLs.
 
 Outside of Rails application, ```context``` can be any other object holding application helpers or state.  All
-subclasses of ```Compositor::Leaf``` inherit ```context``` reference, and can use it to construct Hash representations.
+subclasses of ```Compositor::Leaf``` such as ```UserCompositor``` inherit ```context``` attribute and accessors, and so can
+use the context in generating URLs, or calling any other application helpers.
 
-We recommend you place your Compositor classes in eg ```app/compositors/*``` directory, that has one compositor
-class per model class you will be rendering. Example below would be ```app/compositors/user.rb```, a compositor class
-wrapping ```User``` model.
+We recommend that you place your Compositor classes in eg ```app/compositors/*``` directory, which defines one compositor
+class per model class you will be rendering (although sometimes you may also want a ```CompactUserCompositor```, etc, for
+performance reasons). In the example below, the file could be ```app/compositors/user.rb```,
+a compositor class wrapping ```User``` model.
 
 ```ruby
-#
-# Note: the actual class name "UserCompositor" is converted into a DSL method named "user", shown later.
 # File: app/compositors/user_compositor.rb
-#
 class UserCompositor < Compositor::Leaf
   attr_accessor :user
 
@@ -82,13 +81,41 @@ constructing lists (arrays) or maps (hashes) of objects, and deciding which orde
 inner Hash comes with a "root" element, such as ```:product => { :id => 1, ... }``` where ```:product``` is the root
 element.
 
-So the real power of this gem is in the additional DSL class, that dramatically simplifies definition
-of complex responses, as described below.
+So here is how to create a list of users in this way, but explicitly declaring classes:
 
-Note of caution: despite the fact that typical DSL generation can take mere 50-100 microseconds, defining complex responses
-with DSL does carry a performance penantly of about 50% (we measured it!). Which generally means that generating
-multiple Hashes in a loop using DSL is probably not recommended, but doing it once per web/API request is completely
-reasonable.
+```ruby
+   compositor = MapCompositor.new(view_context,
+        :collection => @users.map{|user| UserCompositor.new(view_context, user, { :root => true }),
+        :root => :users
+```
+
+When calling ```to_hash``` on the top level compositor, we get:
+
+```ruby
+:users => {
+  :user => {
+      id: 1234,
+      username: "kigster",
+      location: "San Francisco",
+      bio: "",
+      url: "",
+      image_url: "http://cdn-app.domain.com/kigster/avatar/200.jpg"
+  },
+  :user => {
+      id: 1234,
+      username: "kigster",
+      location: "San Francisco",
+      bio: "",
+      url: "",
+      image_url: "http://cdn-app.domain.com/kigster/avatar/200.jpg"
+  }
+}
+```
+
+So this is how you can assemple multiple compositors together without the DSL.
+
+But the real power of this gem is in the additional DSL class, that dramatically simplifies definition
+of complex responses, as described below.
 
 ## Using the DSL
 
@@ -139,6 +166,13 @@ similar to ```UserCompositor```, which also have the ```#to_hash``` method defin
 
 Inside the list definition above, @products is a collection of Products, ActiveRecord objects,
 and the block maps each to a Compositor using product() method, registered by ProductCompositor.
+
+## Performance
+
+Note of caution: despite the fact that typical DSL generation can take mere 50-100 microseconds, defining complex responses
+with DSL does carry a performance penantly of about 50% (we measured it!). Which generally means that generating
+multiple Composite objects in a loop using the DSL is probably not recommended, but doing it once per web/API
+request is completely reasonable.
 
 ## Contributing
 
