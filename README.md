@@ -84,7 +84,7 @@ element.
 So here is how to create a list of users in this way, but explicitly declaring classes:
 
 ```ruby
-   compositor = MapCompositor.new(view_context,
+   compositor = Compositor::Map.new(view_context,
         :collection => @users.map{|user| UserCompositor.new(view_context, user, { :root => true }),
         :root => :users
 ```
@@ -166,6 +166,14 @@ similar to ```UserCompositor```, which also have the ```#to_hash``` method defin
 
 Inside the list definition above, @products is a collection of Products, ActiveRecord objects,
 and the block maps each to a Compositor using product() method, registered by ProductCompositor.
+
+## Instance Variables
+
+One thing to note, is that when ```Compositor::DSL``` is used, the gem copies all instance variables
+from the ```context``` into the DSL instance, so in the above example instance variable ```@user```
+was defined on ```view_context``` (by Rails, which copies them from the Controller instance), and
+so became automatically available inside DSL.  Note that all instance variables must be
+defined *before* the DSL instance is created.
 
 ## Performance
 
