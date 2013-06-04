@@ -7,8 +7,8 @@ A Composite Design Pattern with a neat DSL for constructing trees of objects in 
 JSON.  Used by Wanelo to generate all JSON API responses by compositing multiple objects together in API responses, converting to
 a plain ruby Hash (or an Array) and then using OJ gem to convert Hash to JSON.
 
-The performance of this approach is significantly faster than RABL, something we started with and abandoned due
-to it's poor performance.
+The performance of this approach to generate JSON was faster than using RABL in our limited testing, although if performance
+is not an issue for you, RABL is still an excellent choice, and served us well for almost a year.
 
 ## Installation
 
@@ -38,10 +38,8 @@ Outside of Rails application, ```context``` can be any other object holding appl
 subclasses of ```Compositor::Leaf``` such as ```UserCompositor``` inherit ```context``` attribute and accessors, and so can
 use the context in generating URLs, or calling any other application helpers.
 
-We recommend that you place your Compositor classes in eg ```app/compositors/*``` directory, which defines one compositor
-class per model class you will be rendering (although sometimes you may also want a ```CompactUserCompositor```, etc, for
-performance reasons). In the example below, the file could be ```app/compositors/user.rb```,
-a compositor class wrapping ```User``` model.
+We recommend that you place your Compositor classes in eg ```app/compositors/*``` directory, which defines one
+(or more than one) compositor(s) per model class you will be rendering.
 
 ```ruby
 # File: app/compositors/user_compositor.rb
@@ -117,16 +115,16 @@ So this is how you can assemple multiple compositors together without the DSL.
 But the real power of this gem is in the additional DSL class, that dramatically simplifies definition
 of complex responses, as described below.
 
-## Using the DSL
+### Using the DSL
 
 ```UserCompositor``` class, when defined, automatically adds a ```user``` method to the DSL class, which effictively
 instantiates the new UserCompositor instance, passing the context into it automatically.
 
-Using provided ```Compositor::Map``` and ```Compositor::List``` we can construct multiple objects into a larger
+Using built-in ```Compositor::Map``` and ```Compositor::List``` we can construct multiple objects into a larger
 hierarchy.
 
-In the example below, an application also defines ```StoreCompositor```and ```ProductCompositor``` classes
-similar to ```UserCompositor```, which also have the ```#to_hash``` method defined.
+In the example below, an application is assumed to define ```StoreCompositor```and ```ProductCompositor``` classes
+similar to ```UserCompositor```, but wrapping ```Store``` and ```Product``` ActiveRecord models.
 
 ```ruby
    compositor = Compositor::DSL.create(context) do
@@ -164,10 +162,10 @@ similar to ```UserCompositor```, which also have the ```#to_hash``` method defin
    }
 ```
 
-Inside the list definition above, @products is a collection of Products, ActiveRecord objects,
-and the block maps each to a Compositor using product() method, registered by ProductCompositor.
+Inside the list definition above, ```@products``` is a collection of Products, ```ActiveRecord``` objects,
+and the block maps each to a Compositor using ```product()``` method, registered by ProductCompositor.
 
-## Instance Variables
+### Instance Variables
 
 One thing to note, is that when ```Compositor::DSL``` is used, the gem copies all instance variables
 from the ```context``` into the DSL instance, so in the above example instance variable ```@user```
@@ -175,7 +173,7 @@ was defined on ```view_context``` (by Rails, which copies them from the Controll
 so became automatically available inside DSL.  Note that all instance variables must be
 defined *before* the DSL instance is created.
 
-## Performance
+### Performance
 
 Note of caution: despite the fact that typical DSL generation can take mere 50-100 microseconds, defining complex responses
 with DSL does carry a performance penantly of about 50% (we measured it!). Which generally means that generating
