@@ -1,4 +1,6 @@
 module Compositor
+  class MethodAlreadyDefinedError < RuntimeError; end
+
   class Base
     attr_reader :attrs
     attr_accessor :root, :context
@@ -41,7 +43,11 @@ module Compositor
 
     def self.inherited(subclass)
       method_name = root_class_name(subclass)
-      unless method_name.eql?("base") # check if it's already defined
+      unless method_name.eql?("base") || method_name.start_with?("abstract")
+        # check if it's already defined
+        if Compositor::DSL.instance_methods.include?(method_name.to_sym)
+          raise MethodAlreadyDefinedError.new("Method #{method_name} is already defined on the DSL class.")
+        end
         Compositor::DSL.send(:define_method, method_name) do |*args, &block|
           subclass.
             new(@context, *args).

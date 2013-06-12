@@ -173,6 +173,15 @@ was defined on ```view_context``` (by Rails, which copies them from the Controll
 so became automatically available inside DSL.  Note that all instance variables must be
 defined *before* the DSL instance is created.
 
+### Method Name Collisions in the DSL
+
+Because DSL uses only the last word of the class name (eg, ```user``` for a class named ```MyModule::UserCompositor```),
+there is a possibility of name collisions. In order to prevent that, Compositor will detect if a DSL method is already
+defined and throw exception if another class tries to redefine it.
+
+If you prefer to have your own ```Compositor``` class hierarchy, or just compositors that should not be added to the
+DSL, you can name the classes starting with ```Abstract```, such as ```MyModule::AbstractCompositor```.
+
 ### Performance
 
 Note of caution: despite the fact that typical DSL generation can take mere 50-100 microseconds, defining complex responses
