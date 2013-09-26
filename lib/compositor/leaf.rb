@@ -25,9 +25,7 @@ module Compositor
     end
   end
 
-  # Mimic method so you can overide leave name in a class. Since base uses
-  # inherited callback this option does not currently exited in the class
-  # itself.
+  #Mimic Method. Should this be lowercase?
   def self.AbstractLeaf options
     raise "Abstract leaf hsh must contain :as element" unless options[:as]
     Class.new(Compositor::Leaf) do
