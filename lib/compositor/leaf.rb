@@ -28,11 +28,11 @@ module Compositor
   # Mimic method so you can overide leave name in a class. Since base uses
   # inherited callback this option does not currently exited in the class
   # itself.
-  def self.AbstractLeaf hsh
-    raise "Abstract leaf hsh must contain :as element" unless hsh[:as]
-    clazz = Class.new(Compositor::Base)
-    clazz.class_eval "def self.dsl_override; '#{hsh[:as]}'; end;"
-    clazz
+  def self.AbstractLeaf options
+    raise "Abstract leaf hsh must contain :as element" unless options[:as]
+    Class.new(Compositor::Leaf) do
+      define_singleton_method(:dsl_override) { options[:as] }
+    end
   end
 
 end

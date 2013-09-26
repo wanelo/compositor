@@ -45,25 +45,26 @@ describe Compositor::Base do
       it "override does work" do
         lambda {
 
-          class Crew < Compositor::AbstractLeaf :as => "Crew"
+          class Crew < Compositor::AbstractLeaf :as => "crew"
           end
 
           module Motley
-            class Crew < Compositor::AbstractLeaf :as => "MotleyCrew"
+            class Crew < Compositor::AbstractLeaf :as => "motley_crew"
             end
           end
 
           module TwoLive
-            class Crew < Compositor::AbstractLeaf :as => "TwoLiveCrew"
+            class Crew < Compositor::AbstractLeaf :as => "two_live_crew"
             end
           end
 
           module WorldClassWrecking
-            class Crew < Compositor::AbstractLeaf :as => "WorldClassWreckingCrew"
+            class Crew < Compositor::AbstractLeaf :as => "world_class_wrecking_crew"
             end
           end
         }.call
-        [:Crew, :MotleyCrew, :WorldClassWreckingCrew].each do |dsl_name|
+
+        [:crew, :motley_crew, :world_class_wrecking_crew].each do |dsl_name|
           Compositor::DSL.instance_methods.should include(dsl_name)
         end
       end
@@ -71,14 +72,13 @@ describe Compositor::Base do
       it "Fails with same override" do
         expect do
           lambda {
-            class Gang < Compositor::AbstractLeaf :as => "Gang"
+            class Gang < Compositor::AbstractLeaf :as => "gang"
             end
 
             module KoolAndThe
-              class Gang < Compositor::AbstractLeaf :as => "Gang"
+              class Gang < Compositor::AbstractLeaf :as => "gang"
               end
             end
-
           }.call
         end.to raise_error
       end

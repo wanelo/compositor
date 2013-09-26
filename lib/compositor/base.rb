@@ -38,6 +38,7 @@ module Compositor
       self.class.root_class_name(self.class)
     end
 
+
     def self.root_class_name(klazz)
       return klazz.dsl_override if klazz.respond_to?(:dsl_override)
       return nil if klazz.name.nil?
