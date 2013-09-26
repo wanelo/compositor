@@ -24,4 +24,15 @@ module Compositor
       end
     end
   end
+
+  # Mimic method so you can overide leave name in a class. Since base uses
+  # inherited callback this option does not currently exited in the class
+  # itself.
+  def self.AbstractLeaf hsh
+    raise "Abstract leaf hsh must contain :as element" unless hsh[:as]
+    clazz = Class.new(Compositor::Base)
+    clazz.class_eval "def self.dsl_override; '#{hsh[:as]}'; end;"
+    clazz
+  end
+
 end

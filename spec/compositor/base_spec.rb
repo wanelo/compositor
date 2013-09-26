@@ -40,5 +40,48 @@ describe Compositor::Base do
       Compositor::DSL.instance_methods.should_not include(:abstract_user)
     end
 
+    describe "#override_root_class_name" do
+
+      it "override does work" do
+        lambda {
+
+          class Crew < Compositor::AbstractLeaf :as => "Crew"
+          end
+
+          module Motley
+            class Crew < Compositor::AbstractLeaf :as => "MotleyCrew"
+            end
+          end
+
+          module TwoLive
+            class Crew < Compositor::AbstractLeaf :as => "TwoLiveCrew"
+            end
+          end
+
+          module WorldClassWrecking
+            class Crew < Compositor::AbstractLeaf :as => "WorldClassWreckingCrew"
+            end
+          end
+        }.call
+        [:Crew, :MotleyCrew, :WorldClassWreckingCrew].each do |dsl_name|
+          Compositor::DSL.instance_methods.should include(dsl_name)
+        end
+      end
+
+      it "Fails with same override" do
+        expect do
+          lambda {
+            class Gang < Compositor::AbstractLeaf :as => "Gang"
+            end
+
+            module KoolAndThe
+              class Gang < Compositor::AbstractLeaf :as => "Gang"
+              end
+            end
+
+          }.call
+        end.to raise_error
+      end
+    end
   end
 end
