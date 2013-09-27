@@ -45,21 +45,21 @@ describe Compositor::Base do
       it "override does work" do
         lambda {
 
-          class Crew < Compositor::AbstractLeaf :as => "crew"
+          class Crew < Compositor::NamedLeaf "crew"
           end
 
           module Motley
-            class Crew < Compositor::AbstractLeaf :as => "motley_crew"
+            class Crew < Compositor::NamedLeaf "motley_crew"
             end
           end
 
           module TwoLive
-            class Crew < Compositor::AbstractLeaf :as => "two_live_crew"
+            class Crew < Compositor::NamedLeaf "two_live_crew"
             end
           end
 
           module WorldClassWrecking
-            class Crew < Compositor::AbstractLeaf :as => "world_class_wrecking_crew"
+            class Crew < Compositor::NamedLeaf "world_class_wrecking_crew"
             end
           end
         }.call
@@ -72,11 +72,11 @@ describe Compositor::Base do
       it "Fails with same override" do
         expect do
           lambda {
-            class Gang < Compositor::AbstractLeaf :as => "gang"
+            class Gang < Compositor::NamedLeaf "gang"
             end
 
             module KoolAndThe
-              class Gang < Compositor::AbstractLeaf :as => "gang"
+              class Gang < Compositor::NamedLeaf "gang"
               end
             end
           }.call

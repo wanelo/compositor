@@ -5,11 +5,11 @@ describe Compositor::Map do
 
   it 'returns the generated map' do
     expected = {
-      tests: {
-        num1: {number: 1},
-        num2: {number: 2},
-        num3: {number: 3}
-      }
+        tests: {
+            num1: {number: 1},
+            num2: {number: 2},
+            num3: {number: 3}
+        }
     }
 
     dsl = Compositor::DSL.create(context)
@@ -24,15 +24,15 @@ describe Compositor::Map do
 
   it 'returns the generated deeply nested map without explicit receiver' do
     expected = {
-      tests: {
-        num1: {number: 1},
-        num2: {number: 2},
-        num3: {number: 3},
-        stuff: [
-          {number: 10},
-          {number: 11}
-        ]
-      }
+        tests: {
+            num1: {number: 1},
+            num2: {number: 2},
+            num3: {number: 3},
+            stuff: [
+                {number: 10},
+                {number: 11}
+            ]
+        }
     }
 
     dsl = Compositor::DSL.create(context)
@@ -56,6 +56,41 @@ describe Compositor::Map do
       end
 
       {}.should == dsl.to_hash
+    end
+  end
+
+  describe "Same top level class names" do
+    it "supports both classes" do
+      expected = {
+          :tests =>
+              {
+                  :employee => {
+                      :name => "squiggy",
+                      :salary => 1000,
+                      :status => "baller"
+                  },
+                  :peasent => {
+                      :name => "bob",
+                      :age => 12
+                  },
+                  :internal_ballers => [
+                      {:name => "squiggy", :salary => 1000000, :status => "baller"},
+                      {:name => "squiggy", :salary => 2000000, :status => "baller"}
+                  ]
+              }
+      }
+
+      dsl_hash = Compositor::DSL.create(context) do
+        map root: :tests do
+          internal_person 1000, root: :employee
+          api_person root: :peasent
+          list :root => :internal_ballers do
+            internal_person 1000000
+            internal_person 2000000
+          end
+        end
+      end.to_hash
+      expected.should == dsl_hash
     end
   end
 end
