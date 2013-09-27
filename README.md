@@ -210,8 +210,17 @@ module Api
 end
 ```
 
-Please note, if you try to use the same named leaf logical name an error will occur.
+Please note, if you try to use the same named leaf logical name an error will occur. For example:
 
+```ruby
+    class Foo < Compositor::NamedLeaf("baz")
+           # methods omitted
+    end
+
+    class Bar < Compositor::NamedLeaf("baz")
+               # methods omitted
+    end
+```
 
 ### Performance
 
