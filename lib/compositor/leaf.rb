@@ -25,7 +25,7 @@ module Compositor
     end
   end
 
-  # Create a named leaf, Primarily to override the dsl name at the class level
+  # Create a named leaf, To override the dsl name at the class level
   def self.NamedLeaf name
     Class.new(Compositor::Leaf) do
       define_singleton_method(:dsl_override) { name }

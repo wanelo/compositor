@@ -67,3 +67,26 @@ module PrivateApi
   end
 end
 
+
+module Api
+  module V0
+    class User < Compositor::NamedLeaf("v0_user")
+      def to_hash
+        # hash of stuff for v0 rep of user
+      end
+    end
+  end
+end
+
+module Api
+  module V1
+    class User < Compositor::NamedLeaf("v1_user")
+      def to_hash
+        # hash of stuff v1 rep of user
+      end
+    end
+  end
+end
+
+
+
