@@ -27,7 +27,7 @@ module Compositor
 
   #Mimic Method. Should this be lowercase?
   def self.AbstractLeaf options
-    raise "Abstract leaf hsh must contain :as element" unless options[:as]
+    raise "Abstract leaf options must contain :as element" unless options[:as]
     Class.new(Compositor::Leaf) do
       define_singleton_method(:dsl_override) { options[:as] }
     end
