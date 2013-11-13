@@ -1,6 +1,7 @@
 Compositor
 =====
 
+[![Gem Version](https://badge.fury.io/rb/compositor.png)](http://badge.fury.io/rb/compositor)
 [![Build status](https://secure.travis-ci.org/wanelo/compositor.png)](http://travis-ci.org/wanelo/compositor)
 
 A Composite Design Pattern with a neat DSL for constructing trees of objects in order to render them as a Hash, and subsequently
