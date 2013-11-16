@@ -2,7 +2,11 @@ module Compositor
   module Renderer
     class Iterator < Base
       def render
-        collection.inject([]) { |memo, item| memo << item.to_hash; memo }
+        result = []
+        collection.each do |item|
+          result << item.to_hash
+        end
+        result
       end
     end
   end
