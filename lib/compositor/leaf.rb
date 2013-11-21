@@ -31,8 +31,19 @@ module Compositor
   # module inheritance instead. But this works fine with snytax borrows from
   # Camping and Sequal.
   #
-  # class Worm < Compositor::NamedLeaf("WiggleWiggleWorm")
-  # end
+  # Example:
+  #
+  #module Motley
+  #  class Crew < Compositor::NamedLeaf("motley_crew")
+  #  end
+  #end
+  #
+  #module TwoLive
+  #  class Crew < Compositor::NamedLeaf("two_live_crew")
+  #  end
+  #end
+
+
   def self.NamedLeaf name
     Class.new(Compositor::Leaf) do
       eigenclass = class << self; self; end;
