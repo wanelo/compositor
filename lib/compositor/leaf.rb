@@ -26,9 +26,17 @@ module Compositor
   end
 
   # Create a named leaf, To override the dsl name at the class level
+  # Note we use an interstitial anonymous class since the DSL builder relies
+  # on self.inherited. Could get more in terms of flexibility if this used
+  # module inheritance instead. But this works fine with snytax borrows from
+  # Camping and Sequal.
+  #
+  # class Worm < Compositor::NamedLeaf("WiggleWiggleWorm")
+  # end
   def self.NamedLeaf name
     Class.new(Compositor::Leaf) do
-      define_singleton_method(:dsl_override) { name }
+      eigenclass = class << self; self; end;
+      eigenclass.send(:define_method, :dsl_override) { name }
     end
   end
 
