@@ -3,6 +3,7 @@ Compositor
 
 [![Gem Version](https://badge.fury.io/rb/compositor.png)](http://badge.fury.io/rb/compositor)
 [![Build status](https://secure.travis-ci.org/wanelo/compositor.png)](http://travis-ci.org/wanelo/compositor)
+[![Code Climate](https://codeclimate.com/repos/52cf10f269568026b3001c7a/badges/7a1d95ea8e071eb61130/gpa.png)](https://codeclimate.com/repos/52cf10f269568026b3001c7a/feed)
 
 A Composite Design Pattern with a neat DSL for constructing trees of objects in order to render them as a Hash, and subsequently
 JSON.  Used by Wanelo to generate all JSON API responses by compositing multiple objects together in API responses, converting to
