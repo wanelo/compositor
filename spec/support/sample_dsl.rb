@@ -33,3 +33,60 @@ class DslObjectCompositor < Compositor::Leaf
     }
   end
 end
+
+module PublicApi
+  class Person < Compositor::NamedLeaf("api_person")
+    def to_hash
+      with_root_element do
+        {
+            name: "bob",
+            age: 12
+        }
+      end
+    end
+  end
+end
+
+module PrivateApi
+  class Person < Compositor::NamedLeaf("internal_person")
+    attr_accessor :salary
+
+    def initialize(view_context, salary, attrs = {})
+      super(view_context, {salary: salary}.merge!(attrs))
+    end
+
+    def to_hash
+      with_root_element do
+        {
+            name: "squiggy",
+            salary: salary,
+            status: "baller"
+        }
+      end
+    end
+  end
+end
+
+
+module Api
+  module V0
+    class User < Compositor::NamedLeaf("v0_user")
+      def to_hash
+        # hash of stuff for v0 rep of user
+      end
+    end
+  end
+end
+
+module Api
+  module V1
+    class User < Compositor::NamedLeaf("v1_user")
+      def to_hash
+        # hash of stuff v1 rep of user
+      end
+    end
+  end
+end
+
+
+
