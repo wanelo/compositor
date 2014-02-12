@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Compositor::Map do
+describe MapCompositor do
   let(:context) { Object.new }
 
   it 'returns the generated map' do

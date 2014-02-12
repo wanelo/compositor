@@ -1,28 +1,22 @@
 require 'spec_helper'
 
 describe Compositor::Base do
-  describe "#root_class_name" do
-    it "returns the underscored class name" do
-      Compositor::Base.root_class_name(Object).should == "object"
-    end
-
+  describe "#original_dsl_name" do
     it "returns the underscored class name with compositor stripped out" do
-      Compositor::Base.root_class_name(DslStringCompositor).should == "dsl_string"
+      DslStringCompositor.original_dsl_name.should == "dsl_string"
     end
+  end
 
-    it "raises exception when two subclasses that clash on the same name are defined" do
-      block = lambda {
-        # first class
-        class UserCompositor < Compositor::Leaf
-        end
-
-        # 2nd class
-        module ::Foo
-          class UserCompositor < Compositor::Leaf
+  describe '.inherited' do
+    describe "when class is defined inside a module" do
+      it "returns the underscored class name with compositor stripped out but with the module added" do
+        module Exploding
+          class ExplosionCompositor < Compositor::Leaf
           end
         end
-      }
-      expect { block.call }.to raise_error
+
+        expect(Compositor::DSL.instance_methods).to include(:exploding_explosion)
+      end
     end
 
     it "does not add DSL when class name begins with Abstract" do
@@ -39,6 +33,5 @@ describe Compositor::Base do
       expect { block.call }.not_to raise_error
       Compositor::DSL.instance_methods.should_not include(:abstract_user)
     end
-
   end
 end

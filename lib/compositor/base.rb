@@ -1,5 +1,6 @@
 module Compositor
-  class MethodAlreadyDefinedError < RuntimeError; end
+  class MethodAlreadyDefinedError < RuntimeError;
+  end
 
   class Base
     attr_reader :attrs
@@ -33,16 +34,12 @@ module Compositor
       self.root ? true : false
     end
 
-    def root_class_name
-      self.class.root_class_name(self.class)
-    end
-
-    def self.root_class_name(klazz)
-      klazz.name.gsub(/(.*::)|(Compositor$)/, '').underscore
+    def self.original_dsl_name
+      self.name.gsub(/(Compositor$)/, '').gsub(/::/, '_').underscore
     end
 
     def self.inherited(subclass)
-      method_name = root_class_name(subclass)
+      method_name = subclass.original_dsl_name
       unless method_name.eql?("base") || method_name.start_with?("abstract")
         # check if it's already defined
         if Compositor::DSL.instance_methods.include?(method_name.to_sym)
@@ -65,6 +62,6 @@ end
 require_relative 'dsl'
 require_relative 'composite'
 require_relative 'leaf'
-require_relative 'literal'
-require_relative 'list'
-require_relative 'map'
+require_relative 'compositors/literal_compositor'
+require_relative 'compositors/list_compositor'
+require_relative 'compositors/map_compositor'

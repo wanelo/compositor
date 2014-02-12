@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Compositor::List do
+describe ListCompositor do
   let(:context) { Object.new }
 
   it 'returns the generated array with the explicit receiver' do

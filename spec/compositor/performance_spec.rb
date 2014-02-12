@@ -34,10 +34,10 @@ describe 'Performance' do
         10000.times do
           string = DslStringCompositor.new(context)
           int = DslIntCompositor.new(context, 3)
-          list = Compositor::List.new(context,
+          list = ListCompositor.new(context,
                                       root: :numbers,
                                       collection: [1, 2, 3].map! { |n| DslIntCompositor.new(context, n) })
-          cmp = Compositor::Map.new(context, collection: [string, int, list])
+          cmp = MapCompositor.new(context, collection: [string, int, list])
           cmp.to_hash.should == {:a => "b", :number => 3, :numbers => [{:number => 1}, {:number => 2}, {:number => 3}]}
         end
       end
