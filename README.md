@@ -84,9 +84,11 @@ element.
 So here is how to create a list of users in this way, but explicitly declaring classes:
 
 ```ruby
-   compositor = Compositor::Map.new(view_context,
-        :collection => @users.map{|user| UserCompositor.new(view_context, user, { :root => true }),
-        :root => :users
+   compositor = ListCompositor.new(view_context,
+                                   :collection => @users.map { |user|
+                                     UserCompositor.new(view_context, user, { :root => true })
+                                   },
+                                   :root => :users)
 ```
 
 When calling ```to_hash``` on the top level compositor, we get:
@@ -122,7 +124,7 @@ of complex responses, as described below.
 ```UserCompositor``` class, when defined, automatically adds a ```user``` method to the DSL class, which effictively
 instantiates the new UserCompositor instance, passing the context into it automatically.
 
-Using built-in ```Compositor::Map``` and ```Compositor::List``` we can construct multiple objects into a larger
+Using built-in ```MapCompositor``` and ```ListCompositor``` we can construct multiple objects into a larger
 hierarchy.
 
 In the example below, an application is assumed to define ```StoreCompositor```and ```ProductCompositor``` classes
@@ -165,7 +167,7 @@ similar to ```UserCompositor```, but wrapping ```Store``` and ```Product``` Acti
 ```
 
 Inside the list definition above, ```@products``` is a collection of Products, ```ActiveRecord``` objects,
-and the block maps each to a Compositor using ```product()``` method, registered by ProductCompositor.
+and the block maps each to a Compositor using ```product``` method, registered by ProductCompositor.
 
 ### Instance Variables
 
@@ -175,11 +177,11 @@ was defined on ```view_context``` (by Rails, which copies them from the Controll
 so became automatically available inside DSL.  Note that all instance variables must be
 defined *before* the DSL instance is created.
 
-### Method Name Collisions in the DSL
+### Method Names in the DSL
 
-Because DSL uses only the last word of the class name (eg, ```user``` for a class named ```MyModule::UserCompositor```),
-there is a possibility of name collisions. In order to prevent that, Compositor will detect if a DSL method is already
-defined and throw exception if another class tries to redefine it.
+Compositor will extract the full name of the class and place that name into the DSL. For example, ```MyModule::UserCompositor```
+will define a ```my_module_user``` method in the DSL. To create a method called ```user``` the standard convention is to
+use define a class in the global namespace ```UserCompositor```.
 
 If you prefer to have your own ```Compositor``` class hierarchy, or just compositors that should not be added to the
 DSL, you can name the classes starting with ```Abstract```, such as ```MyModule::AbstractCompositor```.
