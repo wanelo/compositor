@@ -2,9 +2,11 @@ class DslStringCompositor < Compositor::Leaf
   attr_accessor :string
 
   def to_hash
-    {
+    with_root_element do
+      {
         a: "b"
-    }
+      }
+    end
   end
 end
 
@@ -18,7 +20,7 @@ class DslIntCompositor < Compositor::Leaf
   def to_hash
     with_root_element do
       {
-          number: @number
+        number: @number
       }
     end
   end
@@ -29,7 +31,7 @@ class DslObjectCompositor < Compositor::Leaf
 
   def to_hash
     {
-        a: object
+      a: object
     }
   end
 end

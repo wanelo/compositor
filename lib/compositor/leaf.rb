@@ -5,7 +5,7 @@ module Compositor
       if @root.is_a?(Symbol)
         super
       elsif @root
-        root_class_name.to_sym
+        self.class.original_dsl_name.to_sym
       else
         nil
       end

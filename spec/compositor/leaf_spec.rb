@@ -26,6 +26,16 @@ describe Compositor::Leaf do
       {a: "b"}.should == dsl.to_hash
     end
 
+    describe 'when root is true' do
+      it 'returns full root' do
+        dsl = Compositor::DSL.create(context) do |dsl|
+          dsl.dsl_string root: true
+        end
+
+        { dsl_string: { a: "b" } }.should == dsl.to_hash
+      end
+    end
+
     it "returns an instance of subclass" do
       dsl = Compositor::DSL.create(context).dsl_string
       dsl.should be_kind_of(DslStringCompositor)
