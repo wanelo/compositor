@@ -180,8 +180,8 @@ defined *before* the DSL instance is created.
 ### Method Names in the DSL
 
 Compositor will extract the full name of the class and place that name into the DSL. For example, ```MyModule::UserCompositor```
-will define a ```my_module_user``` method in the DSL. To create a method called ```user``` the standard convention is to
-use define a class in the global namespace ```UserCompositor```.
+will define a ```my_module_user``` method in the DSL. To create a method called ```user```, the standard convention
+is to define a class in the global namespace called ```UserCompositor```.
 
 If you prefer to have your own ```Compositor``` class hierarchy, or just compositors that should not be added to the
 DSL, you can name the classes starting with ```Abstract```, such as ```MyModule::AbstractCompositor```.
