@@ -4,3 +4,4 @@ rvm:
 script: "bundle exec rspec"
 notifications:
   email: false
+  webhooks: "http://ci.wanelo.com/projects/27d4716d-3f3c-4ccb-89f8-61c781fe6db8/status"
